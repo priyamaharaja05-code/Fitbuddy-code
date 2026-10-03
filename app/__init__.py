@@ -1,0 +1,1 @@
+"""FitBuddy local application package."""

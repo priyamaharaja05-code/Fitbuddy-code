@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Create a practical weekly fitness plan privately on your own computer.">
+  <title>FitBuddy | Your local fitness planner</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}">
+</head>
+<body>
+<header class="topbar"><a class="brand" href="/" aria-label="FitBuddy home"><span class="brand-mark">F</span> FitBuddy</a><a class="nav-link" href="/view-all-users">Saved plans</a></header>
+<main class="page-shell">
+  <section class="hero">
+    <div class="hero-copy"><p class="eyebrow">YOUR PLAN. YOUR PACE.</p><h1>Make your next week<br><span>feel stronger.</span></h1><p class="hero-text">Build a simple, personalized 7-day movement plan and get practical recovery tips. Everything runs locally on this computer—no account, API key, or internet connection required.</p><div class="trust-row"><span>✓ Private by design</span><span>✓ Beginner-friendly</span><span>✓ Adjust it anytime</span></div></div>
+    <div class="form-card"><div class="card-heading"><div><p class="eyebrow">LET'S GET STARTED</p><h2>Your fitness profile</h2></div><span class="step-badge">01 / 01</span></div>
+      {% if error %}<div class="alert alert-error" role="alert">{{ error }}</div>{% endif %}
+      <form id="plan-form" action="/generate-workout" method="post">
+        <div class="field-grid">
+          <label class="field field-wide">Name<input name="name" type="text" maxlength="80" required placeholder="e.g. Alex Morgan" value="{{ values.name if values else '' }}"></label>
+          <label class="field">User ID<input name="user_id" type="text" minlength="2" maxlength="40" pattern="[A-Za-z0-9_-]+" required placeholder="e.g. alex01" value="{{ values.user_id if values else '' }}"><small>Letters, numbers, _ and - only</small></label>
+          <label class="field">Age<input name="age" type="number" min="13" max="100" required placeholder="25" value="{{ values.age if values else '' }}"></label>
+          <label class="field">Weight <span class="unit">kg</span><input name="weight" type="number" min="1" max="300" step="0.1" required placeholder="68" value="{{ values.weight if values else '' }}"></label>
+          <label class="field">Fitness goal<select name="goal" required><option value="" disabled {% if not values or not values.goal %}selected{% endif %}>Choose a goal</option>{% for goal in goals %}<option value="{{ goal }}" {% if values and values.goal == goal %}selected{% endif %}>{{ goal }}</option>{% endfor %}</select></label>
+          <label class="field field-wide">Workout intensity<div class="intensity-options">{% for intensity in intensities %}<label class="intensity-option"><input type="radio" name="intensity" value="{{ intensity }}" {% if (values and values.intensity == intensity) or (not values and intensity == 'Medium') %}checked{% endif %}><span>{{ intensity }}{% if intensity == 'Low' %}<small>Gentle start</small>{% elif intensity == 'Medium' %}<small>Steady effort</small>{% else %}<small>More challenge</small>{% endif %}</span></label>{% endfor %}</div></label>
+        </div>
+        <button class="button button-primary button-full" type="submit" id="generate-button"><span class="button-label">Create my 7-day plan <span aria-hidden="true">→</span></span><span class="loading-label" hidden><span class="spinner"></span> Building your plan…</span></button>
+        <p class="fine-print">General wellness guidance only. Listen to your body and consult a qualified professional if you have health concerns.</p>
+      </form>
+    </div>
+  </section>
+  <section class="feature-strip"><article><span class="feature-icon">↗</span><div><h3>A plan shaped around you</h3><p>Exercises and session lengths adapt to your goal and chosen effort level.</p></div></article><article><span class="feature-icon">◷</span><div><h3>Recovery is part of training</h3><p>Every week includes sensible rest, warm-ups, and cooldown guidance.</p></div></article><article><span class="feature-icon">⌂</span><div><h3>Saved on your device</h3><p>Your profile and plan history stay in a local SQLite database.</p></div></article></section>
+</main><footer class="site-footer">FitBuddy <span>•</span> Local-first fitness planning <span>•</span> Not medical advice</footer>
+<script src="{{ url_for('static', path='/js/script.js') }}" defer></script>
+</body></html>
